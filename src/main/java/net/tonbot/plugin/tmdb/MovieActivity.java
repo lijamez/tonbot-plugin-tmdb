@@ -1,5 +1,6 @@
 package net.tonbot.plugin.tmdb;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ public class MovieActivity implements Activity {
 			.parameters(ImmutableList.of("movie name"))
 			.description("Gets information about a movie.")
 			.build();
+
+	private static DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
 
 	private final TMDbClient tmdbClient;
 
@@ -50,22 +53,36 @@ public class MovieActivity implements Activity {
 			embedBuilder.withUrl("https://www.themoviedb.org/movie/" + movie.getId());
 
 			List<String> descriptionComponents = new ArrayList<>();
-			if (movie.getTagline().isPresent()) {
+
+			String tagline = movie.getTagline().orElse(null);
+			if (!StringUtils.isBlank(tagline)) {
 				descriptionComponents.add("*" + movie.getTagline().get() + "*");
 			}
-			if (movie.getOverview().isPresent()) {
+
+			String overview = movie.getOverview().orElse(null);
+			if (!StringUtils.isBlank(overview)) {
 				descriptionComponents.add(movie.getOverview().get());
 			}
+
 			String description = StringUtils.join(descriptionComponents, "\n\n");
-			embedBuilder.withDescription(description);
+			if (!StringUtils.isBlank(description)) {
+				embedBuilder.withDescription(description);
+			}
 
 			embedBuilder.appendField("Release Date", movie.getReleaseDate(), true);
-			embedBuilder.appendField("Rating", movie.getVoteAverage() + "/10", true);
+
+			String ratingStr = movie.getVoteCount() > 0 ? RATING_FORMAT.format(movie.getVoteAverage()) + "/10"
+					: "No rating";
+			embedBuilder.appendField("Rating", ratingStr, true);
 
 			List<String> genreNames = movie.getGenres().stream()
 					.map(Genre::getName)
+					.filter(name -> !name.isEmpty())
 					.collect(Collectors.toList());
-			embedBuilder.appendField("Genres", StringUtils.join(genreNames, "\n"), true);
+
+			String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");
+
+			embedBuilder.appendField("Genres", genreNamesStr, true);
 
 			if (movie.getPosterPath().isPresent()) {
 				String imageUrl = tmdbClient.getImageUrl(movie.getPosterPath().get());
