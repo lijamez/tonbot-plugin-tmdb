@@ -1,5 +1,6 @@
 package net.tonbot.plugin.tmdb;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,9 @@ public class TvShowActivity implements Activity {
 			.parameters(ImmutableList.of("tv show name"))
 			.description("Gets information about a TV show.")
 			.build();
+
+	private static final DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
+	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
 
 	private final TMDbClient tmdbClient;
 
@@ -46,19 +50,28 @@ public class TvShowActivity implements Activity {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.withTitle(tvShow.getName());
 
-			embedBuilder.withUrl("https://www.themoviedb.org/tv/" + tvShow.getId());
+			embedBuilder.withUrl(TMDB_TV_URL_ROOT + tvShow.getId());
 
-			embedBuilder.withDescription(tvShow.getOverview());
+			if (!StringUtils.isBlank(tvShow.getOverview())) {
+				embedBuilder.withDescription(tvShow.getOverview());
+			}
 
 			embedBuilder.appendField("Air Dates", tvShow.getFirstAirDate() + " to " + tvShow.getLastAirDate(), true);
-			embedBuilder.appendField("Rating", tvShow.getVoteAverage() + "/10", true);
+
+			String ratingStr = tvShow.getVoteCount() > 0 ? RATING_FORMAT.format(tvShow.getVoteAverage()) + "/10"
+					: "No rating";
+			embedBuilder.appendField("Rating", ratingStr, true);
 			embedBuilder.appendField("# of Episodes", Integer.toString(tvShow.getNumberOfEpisodes()), true);
 			embedBuilder.appendField("# of Seasons", Integer.toString(tvShow.getNumberOfSeasons()), true);
 
 			List<String> genreNames = tvShow.getGenres().stream()
 					.map(Genre::getName)
+					.filter(name -> !name.isEmpty())
 					.collect(Collectors.toList());
-			embedBuilder.appendField("Genres", StringUtils.join(genreNames, "\n"), true);
+
+			String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");
+
+			embedBuilder.appendField("Genres", genreNamesStr, true);
 
 			if (tvShow.getPosterPath().isPresent()) {
 				String imageUrl = tmdbClient.getImageUrl(tvShow.getPosterPath().get());
@@ -69,7 +82,7 @@ public class TvShowActivity implements Activity {
 
 			BotUtils.sendEmbeddedContent(event.getChannel(), embedBuilder.build());
 		} else {
-			BotUtils.sendMessage(event.getChannel(), "No results found! :shrug:");
+			BotUtils.sendMessage(event.getChannel(), "I couldn't find a TV show with that name. :shrug:");
 		}
 	}
 }

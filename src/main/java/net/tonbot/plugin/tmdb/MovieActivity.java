@@ -26,6 +26,7 @@ public class MovieActivity implements Activity {
 			.build();
 
 	private static DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
+	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
 
 	private final TMDbClient tmdbClient;
 
@@ -50,7 +51,7 @@ public class MovieActivity implements Activity {
 			EmbedBuilder embedBuilder = new EmbedBuilder();
 			embedBuilder.withTitle(movie.getTitle());
 
-			embedBuilder.withUrl("https://www.themoviedb.org/movie/" + movie.getId());
+			embedBuilder.withUrl(TMDB_TV_URL_ROOT + movie.getId());
 
 			List<String> descriptionComponents = new ArrayList<>();
 
@@ -93,7 +94,7 @@ public class MovieActivity implements Activity {
 
 			BotUtils.sendEmbeddedContent(event.getChannel(), embedBuilder.build());
 		} else {
-			BotUtils.sendMessage(event.getChannel(), "No results found! :shrug:");
+			BotUtils.sendMessage(event.getChannel(), "I couldn't find a movie with that name. :shrug:");
 		}
 	}
 
