@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class TvShow {
+class TvShow {
 
 	private final int id;
 	private final String backdropPath;

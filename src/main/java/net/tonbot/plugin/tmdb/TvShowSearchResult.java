@@ -14,18 +14,18 @@ import lombok.Data;
 class TvShowSearchResult {
 
 	private final int page;
-	private final List<TvShowHit> results;
+	private final List<TvShowHit> hits;
 	private final int totalResults;
 	private final int totalPages;
 
 	@JsonCreator
 	public TvShowSearchResult(
 			@JsonProperty("page") int page,
-			@JsonProperty("results") List<TvShowHit> results,
+			@JsonProperty("results") List<TvShowHit> hits,
 			@JsonProperty("total_results") int totalResults,
 			@JsonProperty("total_pages") int totalPages) {
 		this.page = page;
-		this.results = results;
+		this.hits = hits;
 		this.totalResults = totalResults;
 		this.totalPages = totalPages;
 	}

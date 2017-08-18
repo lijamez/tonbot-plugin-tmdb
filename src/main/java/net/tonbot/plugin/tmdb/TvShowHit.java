@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class TvShowHit {
+class TvShowHit {
 
 	private final String posterPath;
 	private final int popularity;

@@ -3,6 +3,8 @@ package net.tonbot.plugin.tmdb;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,13 +13,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
+import lombok.Data;
+import lombok.NonNull;
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
 import net.tonbot.common.BotUtils;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.util.EmbedBuilder;
 
-public class MovieActivity implements Activity {
+class MovieActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
 			.route(ImmutableList.of("movie"))
@@ -25,7 +30,9 @@ public class MovieActivity implements Activity {
 			.description("Gets information about a movie.")
 			.build();
 
-	private static DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
+	private static final Pattern YEAR_PATTERN = Pattern.compile("\\((?<year>[0-9]{4})\\)");
+
+	private static final DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
 	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
 
 	private final TMDbClient tmdbClient;
@@ -42,60 +49,92 @@ public class MovieActivity implements Activity {
 
 	@Override
 	public void enact(MessageReceivedEvent event, String query) {
-		MovieSearchResult result = this.tmdbClient.searchMovies(query);
-		if (result.getResults().size() > 0) {
-			MovieSearchResult.Movie topMatch = result.getResults().get(0);
+		MovieSearchQuery msq = parseInput(query);
+		System.out.println(msq);
+		MovieSearchResult result = this.tmdbClient.searchMovies(msq.getMovieName(), msq.getYear());
 
-			Movie movie = tmdbClient.getMovie(topMatch.getId());
+		if (result.getHits().size() > 0) {
+			MovieHit topHit = result.getHits().get(0);
 
-			EmbedBuilder embedBuilder = new EmbedBuilder();
-			embedBuilder.withTitle(movie.getTitle());
+			Movie movie = tmdbClient.getMovie(topHit.getId());
 
-			embedBuilder.withUrl(TMDB_TV_URL_ROOT + movie.getId());
+			EmbedObject embedObj = createEmbed(movie);
 
-			List<String> descriptionComponents = new ArrayList<>();
-
-			String tagline = movie.getTagline().orElse(null);
-			if (!StringUtils.isBlank(tagline)) {
-				descriptionComponents.add("*" + movie.getTagline().get() + "*");
-			}
-
-			String overview = movie.getOverview().orElse(null);
-			if (!StringUtils.isBlank(overview)) {
-				descriptionComponents.add(movie.getOverview().get());
-			}
-
-			String description = StringUtils.join(descriptionComponents, "\n\n");
-			if (!StringUtils.isBlank(description)) {
-				embedBuilder.withDescription(description);
-			}
-
-			embedBuilder.appendField("Release Date", movie.getReleaseDate(), true);
-
-			String ratingStr = movie.getVoteCount() > 0 ? RATING_FORMAT.format(movie.getVoteAverage()) + "/10"
-					: "No rating";
-			embedBuilder.appendField("Rating", ratingStr, true);
-
-			List<String> genreNames = movie.getGenres().stream()
-					.map(Genre::getName)
-					.filter(name -> !name.isEmpty())
-					.collect(Collectors.toList());
-
-			String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");
-
-			embedBuilder.appendField("Genres", genreNamesStr, true);
-
-			if (movie.getPosterPath().isPresent()) {
-				String imageUrl = tmdbClient.getImageUrl(movie.getPosterPath().get());
-				embedBuilder.withImage(imageUrl);
-			}
-
-			embedBuilder.withFooterText("Powered by The Movie Database");
-
-			BotUtils.sendEmbeddedContent(event.getChannel(), embedBuilder.build());
+			BotUtils.sendEmbeddedContent(event.getChannel(), embedObj);
 		} else {
 			BotUtils.sendMessage(event.getChannel(), "I couldn't find a movie with that name. :shrug:");
 		}
+	}
+
+	private MovieSearchQuery parseInput(String input) {
+		Matcher matcher = YEAR_PATTERN.matcher(input);
+
+		String movieName;
+		String year = null;
+		if (matcher.find()) {
+			year = matcher.group("year");
+			movieName = matcher.replaceFirst("");
+		} else {
+			movieName = input;
+		}
+
+		return new MovieSearchQuery(movieName, year);
+	}
+
+	private EmbedObject createEmbed(Movie movie) {
+		EmbedBuilder embedBuilder = new EmbedBuilder();
+		embedBuilder.withTitle(movie.getTitle());
+
+		embedBuilder.withUrl(TMDB_TV_URL_ROOT + movie.getId());
+
+		List<String> descriptionComponents = new ArrayList<>();
+
+		String tagline = movie.getTagline().orElse(null);
+		if (!StringUtils.isBlank(tagline)) {
+			descriptionComponents.add("*" + movie.getTagline().get() + "*");
+		}
+
+		String overview = movie.getOverview().orElse(null);
+		if (!StringUtils.isBlank(overview)) {
+			descriptionComponents.add(movie.getOverview().get());
+		}
+
+		String description = StringUtils.join(descriptionComponents, "\n\n");
+		if (!StringUtils.isBlank(description)) {
+			embedBuilder.withDescription(description);
+		}
+
+		embedBuilder.appendField("Release Date", movie.getReleaseDate(), true);
+
+		String ratingStr = movie.getVoteCount() > 0 ? RATING_FORMAT.format(movie.getVoteAverage()) + "/10"
+				: "No rating";
+		embedBuilder.appendField("Rating", ratingStr, true);
+
+		List<String> genreNames = movie.getGenres().stream()
+				.map(Genre::getName)
+				.filter(name -> !name.isEmpty())
+				.collect(Collectors.toList());
+
+		String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");
+
+		embedBuilder.appendField("Genres", genreNamesStr, true);
+
+		if (movie.getPosterPath().isPresent()) {
+			String imageUrl = tmdbClient.getImageUrl(movie.getPosterPath().get());
+			embedBuilder.withImage(imageUrl);
+		}
+
+		embedBuilder.withFooterText("Powered by The Movie Database");
+
+		return embedBuilder.build();
+	}
+
+	@Data
+	private static class MovieSearchQuery {
+
+		@NonNull
+		private final String movieName;
+		private final String year;
 	}
 
 }

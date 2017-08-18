@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
-public class TMDbClient {
+class TMDbClient {
 
 	private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
 
@@ -28,17 +28,29 @@ public class TMDbClient {
 		this.apiKey = Preconditions.checkNotNull(apiKey, "apiKey must be non-null.");
 	}
 
-	public MovieSearchResult searchMovies(String query) {
+	/**
+	 * Searches for movies. 
+	 * @param query The movie name. Non-null.
+	 * @param primaryReleaseYear The primary release year. Used for refining results. Nullable.
+	 * @return {@link MovieSearchResult}
+	 * @throws TMDbClientException If an error occurred when hitting the API.
+	 */
+	public MovieSearchResult searchMovies(String query, String primaryReleaseYear) {
 		Preconditions.checkNotNull(query, "query must be non-null.");
 
 		try {
-			URI uri = new URIBuilder()
+			URIBuilder uriBuilder = new URIBuilder()
 					.setScheme("http")
 					.setHost("api.themoviedb.org")
 					.setPath("/3/search/movie")
 					.setParameter("api_key", apiKey)
-					.setParameter("query", query)
-					.build();
+					.setParameter("query", query);
+			
+			if (primaryReleaseYear != null) {
+				uriBuilder = uriBuilder.addParameter("primary_release_year", primaryReleaseYear);
+			}
+			
+			URI uri = uriBuilder.build();
 
 			return get(uri, MovieSearchResult.class);
 
