@@ -52,7 +52,6 @@ class MovieActivity implements Activity {
 	@Override
 	public void enact(MessageReceivedEvent event, String query) {
 		MovieSearchQuery msq = parseInput(query);
-		System.out.println(msq);
 		MovieSearchResult result = this.tmdbClient.searchMovies(msq.getMovieName(), msq.getYear());
 
 		if (result.getHits().size() > 0) {
