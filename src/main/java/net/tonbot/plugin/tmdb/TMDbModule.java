@@ -14,20 +14,24 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 import net.tonbot.common.Activity;
+import net.tonbot.common.BotUtils;
 import net.tonbot.common.Prefix;
 
 class TMDbModule extends AbstractModule {
 
 	private final String prefix;
+	private final BotUtils botUtils;
 	private final String tmdbApiKey;
 
-	public TMDbModule(String prefix, String tmdbApiKey) {
+	public TMDbModule(String prefix, BotUtils botUtils, String tmdbApiKey) {
 		this.prefix = Preconditions.checkNotNull(prefix, "prefix must be non-null.");
+		this.botUtils = Preconditions.checkNotNull(botUtils, "botUtils must be non-null.");
 		this.tmdbApiKey = Preconditions.checkNotNull(tmdbApiKey, "tmdbApiKey must be non-null.");
 	}
 
 	public void configure() {
 		bind(String.class).annotatedWith(Prefix.class).toInstance(prefix);
+		bind(BotUtils.class).toInstance(botUtils);
 		bind(String.class).annotatedWith(TMDbApiKey.class).toInstance(tmdbApiKey);
 	}
 

@@ -35,10 +35,12 @@ class MovieActivity implements Activity {
 	private static final DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
 	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
 
+	private final BotUtils botUtils;
 	private final TMDbClient tmdbClient;
 
 	@Inject
-	public MovieActivity(TMDbClient tmdbClient) {
+	public MovieActivity(BotUtils botUtils, TMDbClient tmdbClient) {
+		this.botUtils = Preconditions.checkNotNull(botUtils, "botUtils must be non-null.");
 		this.tmdbClient = Preconditions.checkNotNull(tmdbClient, "tmdbClient must be non-null.");
 	}
 
@@ -60,9 +62,9 @@ class MovieActivity implements Activity {
 
 			EmbedObject embedObj = createEmbed(movie);
 
-			BotUtils.sendEmbeddedContent(event.getChannel(), embedObj);
+			botUtils.sendEmbed(event.getChannel(), embedObj);
 		} else {
-			BotUtils.sendMessage(event.getChannel(), "I couldn't find a movie with that name. :shrug:");
+			botUtils.sendMessage(event.getChannel(), "I couldn't find a movie with that name. :shrug:");
 		}
 	}
 
