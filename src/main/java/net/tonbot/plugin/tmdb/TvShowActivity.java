@@ -20,7 +20,7 @@ import sx.blah.discord.util.EmbedBuilder;
 public class TvShowActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route(ImmutableList.of("tv"))
+			.route("tv")
 			.parameters(ImmutableList.of("tv show name"))
 			.description("Gets information about a TV show.")
 			.build();

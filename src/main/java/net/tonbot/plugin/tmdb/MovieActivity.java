@@ -25,7 +25,7 @@ import sx.blah.discord.util.EmbedBuilder;
 class MovieActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route(ImmutableList.of("movie"))
+			.route("movie")
 			.parameters(ImmutableList.of("movie name"))
 			.description("Gets information about a movie.")
 			.build();
