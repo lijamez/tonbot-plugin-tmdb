@@ -21,7 +21,7 @@ public class TvShowActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
 			.route("tv")
-			.parameters(ImmutableList.of("tv show name"))
+			.parameters(ImmutableList.of("<tv show name>"))
 			.description("Gets information about a TV show.")
 			.build();
 

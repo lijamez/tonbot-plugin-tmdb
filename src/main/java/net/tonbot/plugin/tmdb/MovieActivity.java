@@ -26,7 +26,7 @@ class MovieActivity implements Activity {
 
 	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
 			.route("movie")
-			.parameters(ImmutableList.of("movie name"))
+			.parameters(ImmutableList.of("<movie name>"))
 			.description("Gets information about a movie.")
 			.build();
 
