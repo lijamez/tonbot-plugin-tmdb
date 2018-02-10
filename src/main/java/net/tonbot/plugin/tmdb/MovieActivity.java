@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.NonNull;
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
+import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -68,6 +69,10 @@ class MovieActivity implements Activity {
 	}
 
 	private MovieSearchQuery parseInput(String input) {
+		if (StringUtils.isBlank(input)) {
+			throw new ActivityUsageException("You need to enter movie name.");
+		}
+
 		Matcher matcher = YEAR_PATTERN.matcher(input);
 
 		String movieName;

@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 
 import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
+import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
@@ -44,9 +45,12 @@ public class TvShowActivity implements Activity {
 
 	@Override
 	public void enact(MessageReceivedEvent event, String query) {
-		
+		if (StringUtils.isBlank(query)) {
+			throw new ActivityUsageException("You need to enter TV show name.");
+		}
+
 		TvShowSearchResult result = this.tmdbClient.searchTvShows(query);
-		
+
 		if (result.getHits().size() > 0) {
 			TvShowHit topHit = result.getHits().get(0);
 
@@ -59,7 +63,7 @@ public class TvShowActivity implements Activity {
 			botUtils.sendMessage(event.getChannel(), "I couldn't find a TV show with that name. :shrug:");
 		}
 	}
-	
+
 	private EmbedObject createEmbed(TvShow tvShow) {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 		embedBuilder.withTitle(tvShow.getName());
@@ -93,7 +97,7 @@ public class TvShowActivity implements Activity {
 		}
 
 		embedBuilder.withFooterText("Powered by The Movie Database");
-		
+
 		return embedBuilder.build();
 	}
 }
