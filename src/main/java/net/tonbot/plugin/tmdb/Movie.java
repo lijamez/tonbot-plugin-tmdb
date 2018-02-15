@@ -29,23 +29,14 @@ class Movie {
 	private final String tagline;
 
 	@JsonCreator
-	public Movie(
-			@JsonProperty("vote_count") int voteCount,
-			@JsonProperty("id") int id,
-			@JsonProperty("video") boolean video,
-			@JsonProperty("vote_average") double voteAverage,
-			@JsonProperty("title") String title,
-			@JsonProperty("popularity") double popularity,
-			@JsonProperty("poster_path") String posterPath,
-			@JsonProperty("original_language") String originalLanguage,
-			@JsonProperty("original_title") String originalTitle,
-			@JsonProperty("genres") List<Genre> genres,
-			@JsonProperty("backdrop_path") String backdropPath,
-			@JsonProperty("adult") boolean adult,
-			@JsonProperty("overview") String overview,
-			@JsonProperty("release_date") String releaseDate,
-			@JsonProperty("imdb_id") String imdbId,
-			@JsonProperty("tagline") String tagline) {
+	public Movie(@JsonProperty("vote_count") int voteCount, @JsonProperty("id") int id,
+			@JsonProperty("video") boolean video, @JsonProperty("vote_average") double voteAverage,
+			@JsonProperty("title") String title, @JsonProperty("popularity") double popularity,
+			@JsonProperty("poster_path") String posterPath, @JsonProperty("original_language") String originalLanguage,
+			@JsonProperty("original_title") String originalTitle, @JsonProperty("genres") List<Genre> genres,
+			@JsonProperty("backdrop_path") String backdropPath, @JsonProperty("adult") boolean adult,
+			@JsonProperty("overview") String overview, @JsonProperty("release_date") String releaseDate,
+			@JsonProperty("imdb_id") String imdbId, @JsonProperty("tagline") String tagline) {
 		this.voteCount = voteCount;
 		this.id = id;
 		this.video = video;

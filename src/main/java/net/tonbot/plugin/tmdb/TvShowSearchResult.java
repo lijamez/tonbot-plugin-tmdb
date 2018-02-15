@@ -19,11 +19,8 @@ class TvShowSearchResult {
 	private final int totalPages;
 
 	@JsonCreator
-	public TvShowSearchResult(
-			@JsonProperty("page") int page,
-			@JsonProperty("results") List<TvShowHit> hits,
-			@JsonProperty("total_results") int totalResults,
-			@JsonProperty("total_pages") int totalPages) {
+	public TvShowSearchResult(@JsonProperty("page") int page, @JsonProperty("results") List<TvShowHit> hits,
+			@JsonProperty("total_results") int totalResults, @JsonProperty("total_pages") int totalPages) {
 		this.page = page;
 		this.hits = hits;
 		this.totalResults = totalResults;

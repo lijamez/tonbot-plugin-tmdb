@@ -19,17 +19,15 @@ import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
 import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
+import net.tonbot.common.Enactable;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.util.EmbedBuilder;
 
 class MovieActivity implements Activity {
 
-	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route("movie")
-			.parameters(ImmutableList.of("<movie name>"))
-			.description("Gets information about a movie.")
-			.build();
+	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder().route("movie")
+			.parameters(ImmutableList.of("<movie name>")).description("Gets information about a movie.").build();
 
 	private static final Pattern YEAR_PATTERN = Pattern.compile("\\((?<year>[0-9]{4})\\)");
 
@@ -50,9 +48,9 @@ class MovieActivity implements Activity {
 		return ACTIVITY_DESCRIPTOR;
 	}
 
-	@Override
-	public void enact(MessageReceivedEvent event, String query) {
-		MovieSearchQuery msq = parseInput(query);
+	@Enactable
+	public void enact(MessageReceivedEvent event, MovieRequest request) {
+		MovieSearchQuery msq = parseInput(request.getMovieName());
 		MovieSearchResult result = this.tmdbClient.searchMovies(msq.getMovieName(), msq.getYear());
 
 		if (result.getHits().size() > 0) {
@@ -116,9 +114,7 @@ class MovieActivity implements Activity {
 				: "No rating";
 		embedBuilder.appendField("Rating", ratingStr, true);
 
-		List<String> genreNames = movie.getGenres().stream()
-				.map(Genre::getName)
-				.filter(name -> !name.isEmpty())
+		List<String> genreNames = movie.getGenres().stream().map(Genre::getName).filter(name -> !name.isEmpty())
 				.collect(Collectors.toList());
 
 		String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");

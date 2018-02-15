@@ -25,19 +25,12 @@ class TvShow {
 	private final List<Genre> genres;
 
 	@JsonCreator()
-	public TvShow(
-			@JsonProperty("id") int id,
-			@JsonProperty("backdrop_path") String backdropPath,
-			@JsonProperty("name") String name,
-			@JsonProperty("number_of_episodes") int numberOfEpisodes,
-			@JsonProperty("number_of_seasons") int numberOfSeasons,
-			@JsonProperty("overview") String overview,
-			@JsonProperty("poster_path") String posterPath,
-			@JsonProperty("vote_average") int voteAverage,
-			@JsonProperty("vote_count") int voteCount,
-			@JsonProperty("first_air_date") String firstAirDate,
-			@JsonProperty("last_air_date") String lastAirDate,
-			@JsonProperty("genres") List<Genre> genres) {
+	public TvShow(@JsonProperty("id") int id, @JsonProperty("backdrop_path") String backdropPath,
+			@JsonProperty("name") String name, @JsonProperty("number_of_episodes") int numberOfEpisodes,
+			@JsonProperty("number_of_seasons") int numberOfSeasons, @JsonProperty("overview") String overview,
+			@JsonProperty("poster_path") String posterPath, @JsonProperty("vote_average") int voteAverage,
+			@JsonProperty("vote_count") int voteCount, @JsonProperty("first_air_date") String firstAirDate,
+			@JsonProperty("last_air_date") String lastAirDate, @JsonProperty("genres") List<Genre> genres) {
 		this.id = id;
 		this.backdropPath = backdropPath;
 		this.name = name;

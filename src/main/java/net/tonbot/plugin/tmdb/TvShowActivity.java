@@ -14,17 +14,15 @@ import net.tonbot.common.Activity;
 import net.tonbot.common.ActivityDescriptor;
 import net.tonbot.common.ActivityUsageException;
 import net.tonbot.common.BotUtils;
+import net.tonbot.common.Enactable;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class TvShowActivity implements Activity {
 
-	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder()
-			.route("tv")
-			.parameters(ImmutableList.of("<tv show name>"))
-			.description("Gets information about a TV show.")
-			.build();
+	private static final ActivityDescriptor ACTIVITY_DESCRIPTOR = ActivityDescriptor.builder().route("tv")
+			.parameters(ImmutableList.of("<tv show name>")).description("Gets information about a TV show.").build();
 
 	private static final DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
 	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
@@ -43,13 +41,13 @@ public class TvShowActivity implements Activity {
 		return ACTIVITY_DESCRIPTOR;
 	}
 
-	@Override
-	public void enact(MessageReceivedEvent event, String query) {
-		if (StringUtils.isBlank(query)) {
+	@Enactable
+	public void enact(MessageReceivedEvent event, TvShowRequest request) {
+		if (StringUtils.isBlank(request.getTvShowName())) {
 			throw new ActivityUsageException("You need to enter TV show name.");
 		}
 
-		TvShowSearchResult result = this.tmdbClient.searchTvShows(query);
+		TvShowSearchResult result = this.tmdbClient.searchTvShows(request.getTvShowName());
 
 		if (result.getHits().size() > 0) {
 			TvShowHit topHit = result.getHits().get(0);
@@ -82,9 +80,7 @@ public class TvShowActivity implements Activity {
 		embedBuilder.appendField("# of Episodes", Integer.toString(tvShow.getNumberOfEpisodes()), true);
 		embedBuilder.appendField("# of Seasons", Integer.toString(tvShow.getNumberOfSeasons()), true);
 
-		List<String> genreNames = tvShow.getGenres().stream()
-				.map(Genre::getName)
-				.filter(name -> !name.isEmpty())
+		List<String> genreNames = tvShow.getGenres().stream().map(Genre::getName).filter(name -> !name.isEmpty())
 				.collect(Collectors.toList());
 
 		String genreNamesStr = genreNames.isEmpty() ? "Unknown" : StringUtils.join(genreNames, "\n");

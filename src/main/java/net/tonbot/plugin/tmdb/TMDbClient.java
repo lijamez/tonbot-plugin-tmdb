@@ -29,27 +29,27 @@ class TMDbClient {
 	}
 
 	/**
-	 * Searches for movies. 
-	 * @param query The movie name. Non-null.
-	 * @param primaryReleaseYear The primary release year. Used for refining results. Nullable.
+	 * Searches for movies.
+	 * 
+	 * @param query
+	 *            The movie name. Non-null.
+	 * @param primaryReleaseYear
+	 *            The primary release year. Used for refining results. Nullable.
 	 * @return {@link MovieSearchResult}
-	 * @throws TMDbClientException If an error occurred when hitting the API.
+	 * @throws TMDbClientException
+	 *             If an error occurred when hitting the API.
 	 */
 	public MovieSearchResult searchMovies(String query, String primaryReleaseYear) {
 		Preconditions.checkNotNull(query, "query must be non-null.");
 
 		try {
-			URIBuilder uriBuilder = new URIBuilder()
-					.setScheme("http")
-					.setHost("api.themoviedb.org")
-					.setPath("/3/search/movie")
-					.setParameter("api_key", apiKey)
-					.setParameter("query", query);
-			
+			URIBuilder uriBuilder = new URIBuilder().setScheme("http").setHost("api.themoviedb.org")
+					.setPath("/3/search/movie").setParameter("api_key", apiKey).setParameter("query", query);
+
 			if (primaryReleaseYear != null) {
 				uriBuilder = uriBuilder.addParameter("primary_release_year", primaryReleaseYear);
 			}
-			
+
 			URI uri = uriBuilder.build();
 
 			return get(uri, MovieSearchResult.class);
@@ -62,12 +62,8 @@ class TMDbClient {
 	public Movie getMovie(int movieId) {
 
 		try {
-			URI uri = new URIBuilder()
-					.setScheme("http")
-					.setHost("api.themoviedb.org")
-					.setPath("/3/movie/" + movieId)
-					.setParameter("api_key", apiKey)
-					.build();
+			URI uri = new URIBuilder().setScheme("http").setHost("api.themoviedb.org").setPath("/3/movie/" + movieId)
+					.setParameter("api_key", apiKey).build();
 
 			return get(uri, Movie.class);
 
@@ -80,13 +76,8 @@ class TMDbClient {
 		Preconditions.checkNotNull(query, "query must be non-null.");
 
 		try {
-			URI uri = new URIBuilder()
-					.setScheme("http")
-					.setHost("api.themoviedb.org")
-					.setPath("/3/search/tv")
-					.setParameter("api_key", apiKey)
-					.setParameter("query", query)
-					.build();
+			URI uri = new URIBuilder().setScheme("http").setHost("api.themoviedb.org").setPath("/3/search/tv")
+					.setParameter("api_key", apiKey).setParameter("query", query).build();
 
 			return get(uri, TvShowSearchResult.class);
 
@@ -98,12 +89,8 @@ class TMDbClient {
 	public TvShow getTvShow(int tvShowId) {
 
 		try {
-			URI uri = new URIBuilder()
-					.setScheme("http")
-					.setHost("api.themoviedb.org")
-					.setPath("/3/tv/" + tvShowId)
-					.setParameter("api_key", apiKey)
-					.build();
+			URI uri = new URIBuilder().setScheme("http").setHost("api.themoviedb.org").setPath("/3/tv/" + tvShowId)
+					.setParameter("api_key", apiKey).build();
 
 			return get(uri, TvShow.class);
 

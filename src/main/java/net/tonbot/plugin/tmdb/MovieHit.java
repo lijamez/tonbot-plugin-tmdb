@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 class MovieHit {
-	
+
 	private final int voteCount;
 	private final int id;
 	private final boolean video;
@@ -27,21 +27,13 @@ class MovieHit {
 	private final String releaseDate;
 
 	@JsonCreator
-	public MovieHit(
-			@JsonProperty("vote_count") int voteCount,
-			@JsonProperty("id") int id,
-			@JsonProperty("video") boolean video,
-			@JsonProperty("vote_average") double voteAverage,
-			@JsonProperty("title") String title,
-			@JsonProperty("popularity") double popularity,
-			@JsonProperty("poster_path") String posterPath,
-			@JsonProperty("original_language") String originalLanguage,
-			@JsonProperty("original_title") String originalTitle,
-			@JsonProperty("genre_ids") List<Integer> genreIds,
-			@JsonProperty("backdrop_path") String backdropPath,
-			@JsonProperty("adult") boolean adult,
-			@JsonProperty("overview") String overview,
-			@JsonProperty("release_date") String releaseDate) {
+	public MovieHit(@JsonProperty("vote_count") int voteCount, @JsonProperty("id") int id,
+			@JsonProperty("video") boolean video, @JsonProperty("vote_average") double voteAverage,
+			@JsonProperty("title") String title, @JsonProperty("popularity") double popularity,
+			@JsonProperty("poster_path") String posterPath, @JsonProperty("original_language") String originalLanguage,
+			@JsonProperty("original_title") String originalTitle, @JsonProperty("genre_ids") List<Integer> genreIds,
+			@JsonProperty("backdrop_path") String backdropPath, @JsonProperty("adult") boolean adult,
+			@JsonProperty("overview") String overview, @JsonProperty("release_date") String releaseDate) {
 		this.voteCount = voteCount;
 		this.id = id;
 		this.video = video;

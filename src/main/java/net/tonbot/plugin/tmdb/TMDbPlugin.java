@@ -31,7 +31,8 @@ public class TMDbPlugin extends TonbotPlugin {
 
 		try {
 			Config config = objectMapper.readValue(configFile, Config.class);
-			this.injector = Guice.createInjector(new TMDbModule(args.getPrefix(), args.getBotUtils(), config.getTmdbApiKey()));
+			this.injector = Guice
+					.createInjector(new TMDbModule(args.getPrefix(), args.getBotUtils(), config.getTmdbApiKey()));
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read configuration file.", e);
 		}

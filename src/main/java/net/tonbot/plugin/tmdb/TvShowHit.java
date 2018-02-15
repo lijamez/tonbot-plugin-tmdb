@@ -26,20 +26,14 @@ class TvShowHit {
 	private final String originalName;
 
 	@JsonCreator
-	public TvShowHit(
-			@JsonProperty("poster_path") String posterPath,
-			@JsonProperty("popularity") int popularity,
-			@JsonProperty("id") int id,
-			@JsonProperty("backdrop_path") String backdropPath,
-			@JsonProperty("vote_average") int voteAverage,
-			@JsonProperty("overview") String overview,
+	public TvShowHit(@JsonProperty("poster_path") String posterPath, @JsonProperty("popularity") int popularity,
+			@JsonProperty("id") int id, @JsonProperty("backdrop_path") String backdropPath,
+			@JsonProperty("vote_average") int voteAverage, @JsonProperty("overview") String overview,
 			@JsonProperty("firstAirDate") String firstAirDate,
 			@JsonProperty("origin_country") List<String> originCountry,
 			@JsonProperty("genre_ids") List<Integer> genreIds,
-			@JsonProperty("original_language") String originalLanguage,
-			@JsonProperty("vote_count") int voteCount,
-			@JsonProperty("name") String name,
-			@JsonProperty("original_name") String originalName) {
+			@JsonProperty("original_language") String originalLanguage, @JsonProperty("vote_count") int voteCount,
+			@JsonProperty("name") String name, @JsonProperty("original_name") String originalName) {
 		this.posterPath = posterPath;
 		this.popularity = popularity;
 		this.id = id;

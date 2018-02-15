@@ -16,11 +16,8 @@ class MovieSearchResult {
 	private final List<MovieHit> hits;
 
 	@JsonCreator
-	public MovieSearchResult(
-			@JsonProperty("page") int page,
-			@JsonProperty("total_results") int totalResults,
-			@JsonProperty("total_pages") int totalPages,
-			@JsonProperty("results") List<MovieHit> hits) {
+	public MovieSearchResult(@JsonProperty("page") int page, @JsonProperty("total_results") int totalResults,
+			@JsonProperty("total_pages") int totalPages, @JsonProperty("results") List<MovieHit> hits) {
 		this.page = page;
 		this.totalResults = totalResults;
 		this.totalPages = totalPages;
