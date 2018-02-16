@@ -9,7 +9,7 @@ import net.tonbot.common.Param;
 
 @EqualsAndHashCode
 @ToString
-public class MovieRequest {
+class MovieRequest {
 
 	@Getter
 	@Param(name = "movie name", ordinal = 0, description = "The movie name.", captureRemaining = true)
