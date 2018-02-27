@@ -32,7 +32,7 @@ class MovieActivity implements Activity {
 	private static final Pattern YEAR_PATTERN = Pattern.compile("\\((?<year>[0-9]{4})\\)");
 
 	private static final DecimalFormat RATING_FORMAT = new DecimalFormat("#.#");
-	private static final String TMDB_TV_URL_ROOT = "https://www.themoviedb.org/tv/";
+	private static final String TMDB_MOVIE_URL_ROOT = "https://www.themoviedb.org/movie/";
 
 	private final BotUtils botUtils;
 	private final TMDbClient tmdbClient;
@@ -89,7 +89,7 @@ class MovieActivity implements Activity {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 		embedBuilder.withTitle(movie.getTitle());
 
-		embedBuilder.withUrl(TMDB_TV_URL_ROOT + movie.getId());
+		embedBuilder.withUrl(TMDB_MOVIE_URL_ROOT + movie.getId());
 
 		List<String> descriptionComponents = new ArrayList<>();
 
